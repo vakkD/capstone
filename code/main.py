@@ -1,21 +1,41 @@
-import tensorflow as tf
-from PIL import Image, ImageTk
-import numpy as np
-from tensorflow.keras.optimizers import Adamax
 import tkinter as tk
-from tkinter import filedialog as fd
-import pandas as pd
-import os
 import tkinter.ttk as ttk
 
-file_predictions =[]  
-
-try:loaded_model =tf.keras.models.load_model('L:/!school/!uni/!classes/sem2-2023/software technology/assignments/assignment 2/code/newmodel.h5', compile =False)
-except:loaded_model  =tf.keras.models.load_model('C:/Users/dylan/OneDrive/school/sem2-2023/software technology/assignments/assignment 2/code/newmodel.h5', compile =False)
-loaded_model.compile(Adamax(learning_rate =0.001), loss ='categorical_crossentropy', metrics =['accuracy'])
-
-window =tk.Tk()
+window = tk.Tk()
 window.geometry('306x344')
+
+temp_label = tk.Label(window, text='Loading libraries')
+temp_label.pack()
+
+
+def load_libraries():
+    temp_label.config(text='Loading libraries...')
+    window.update_idletasks()
+    
+    global fd,pd,os,Image,ImageTk,np,tf
+    import tensorflow as tf
+    from PIL import Image, ImageTk
+    import numpy as np
+    from tensorflow.keras.optimizers import Adamax
+    from tkinter import filedialog as fd
+    import pandas as pd
+    import os
+    print('Libraries loaded')
+
+    global loaded_model
+    try:
+        loaded_model = tf.keras.models.load_model('L:/!school/!uni/!classes/sem2-2023/software technology/assignments/assignment 2/code/newmodel.h5', compile=False)
+    except FileNotFoundError:
+        loaded_model = tf.keras.models.load_model('C:/Users/dylan/OneDrive/school/sem2-2023/software technology/assignments/assignment 2/code/newmodel.h5', compile=False)
+    except:
+        temp_label.config(text='Error: model not found')
+
+    loaded_model.compile(Adamax(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
+    temp_label.destroy()
+
+window.after(100, load_libraries)
+
+file_predictions = []
 filepath ='/'
 selected_files =[]
 num_selected_files =0
@@ -160,18 +180,6 @@ def open_image_grid():
 
     canvas.update()
     canvas.configure(scrollregion =canvas.bbox('all'))
-
-    # def close_window():
-    #     for image in images:
-    #         image.__del__()
-
-    #     for label in labels:
-    #         label.grid_forget()
-
-    #     image_window.destroy()
-
-    # close_button =tk.Button(image_window, text ='Close', command =close_window)
-    # close_button.pack()
 
 open_file_button =tk.Button(window, text ='Select file(s)', command =select_file)
 open_file_button.pack()
